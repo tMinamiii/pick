@@ -5,11 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
-	"os/exec"
-	"runtime"
+	pickpocket "pickpocket/ppt"
 )
 
 // GetRequest is Pocket Retrieve API struct
@@ -29,7 +27,7 @@ func NewGetRequest(term string, key AuthKey) *GetRequest {
 	}
 }
 
-func get(request *GetRequest) *PocketResponse {
+func get(request *GetRequest) *pickpocket.PocketResponse {
 	url := "https://getpocket.com/v3/get"
 
 	payload, err := json.Marshal(request)
@@ -57,33 +55,13 @@ func get(request *GetRequest) *PocketResponse {
 
 	byteArray, _ := ioutil.ReadAll(resp.Body)
 
-	var presp PocketResponse
+	var presp pickpocket.PocketResponse
 	if json.Unmarshal(byteArray, &presp) != nil {
 		fmt.Printf("Failed to create NewRequest. %v\n", err)
 		os.Exit(1)
 	}
 
 	return &presp
-}
-
-// OpenBrowser open url each platform default browser
-func OpenBrowser(url string) {
-	var err error
-
-	switch runtime.GOOS {
-	case "linux":
-		err = exec.Command("xdg-open", url).Start()
-	case "windows":
-		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
-	case "darwin":
-		err = exec.Command("open", url).Start()
-	default:
-		err = fmt.Errorf("unsupported platform")
-	}
-
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 // AuthKey is data structure for reading key.json
