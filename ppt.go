@@ -1,5 +1,0 @@
-package pickpocket
-
-func main() {
-
-}
