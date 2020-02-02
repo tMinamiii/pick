@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"pick"
@@ -163,7 +164,8 @@ func main() {
 	http.Handle("/", &redirectHandler{consumerKey, code})
 	http.HandleFunc("/exit", exitHandler)
 
-	if http.ListenAndServe(RedirectURL, nil) != nil {
+	if err := http.ListenAndServe(RedirectURL, nil); err != nil {
+		log.Fatal(err)
 		os.Exit(1)
 	}
 }
