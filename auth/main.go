@@ -8,9 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"os/exec"
-	pickpocket "pickpocket/ppt"
-	"runtime"
+	"pick"
 	"strings"
 	"time"
 )
@@ -18,27 +16,6 @@ import (
 const (
 	RedirectURL = "localhost:18123"
 )
-
-// OpenBrowser open url each platform default browser
-func OpenBrowser(url string) {
-	var err error
-
-	switch runtime.GOOS {
-	case "linux":
-		err = exec.Command("xdg-open", url).Start()
-	case "windows":
-		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
-	case "darwin":
-		err = exec.Command("open", url).Start()
-	default:
-		err = fmt.Errorf("unsupported platform")
-	}
-
-	if err != nil {
-		os.Exit(1)
-	}
-}
-
 
 func Post(url string, payload []byte) []byte {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
@@ -92,7 +69,7 @@ func authAndRedirect(code string) {
 	authorizeRequestURL := "https://getpocket.com/auth/authorize?request_token=" + code + "&redirect_uri=http://" + RedirectURL
 
 	time.Sleep(1 * time.Second)
-	OpenBrowser(authorizeRequestURL)
+	pick.OpenBrowser(authorizeRequestURL)
 }
 
 func emitAccessToken(consumerKey string, code string) []byte {
@@ -119,8 +96,7 @@ func emitAccessToken(consumerKey string, code string) []byte {
 		accessTokenParameter := strings.Split(string(body), "&")[0]
 		accessToken := strings.Split(accessTokenParameter, "=")[1]
 
-
-		result, err := json.Marshal(&pickpocket.PocketAuthKey{
+		result, err := json.Marshal(&pick.PocketAuthKey{
 			ConsumerKey: consumerKey,
 			AccessToken: accessToken,
 		})

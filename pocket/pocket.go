@@ -1,6 +1,13 @@
-package pick
+package pocket
 
-import "bytes"
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+)
 
 type PocketRequest struct {
 	ConsumerKey string `json:"consumer_key"`
@@ -12,7 +19,6 @@ type PocketAuthKey struct {
 	ConsumerKey string `json:"consumer_key"`
 	AccessToken string `json:"access_token"`
 }
-
 
 // PocketResponse is represent Pocket Get API resposen
 type PocketResponse struct {
@@ -107,4 +113,58 @@ func (p *PocketArticle) String() string {
 	out.WriteString("(" + p.ResolvedURL + ")\n")
 
 	return out.String()
+}
+
+// GetRequest is Pocket Retrieve API struct
+type PocketGetRequest struct {
+	ConsumerKey string `json:"consumer_key"`
+	AccessToken string `json:"access_token"`
+	Search      string `json:"search"`
+	Count       int    `json:"count"`
+}
+
+// NewGetRequest create new GetRequest data structure
+func NewGetRequest(term string, key PocketAuthKey) *PocketGetRequest {
+	return &PocketGetRequest{
+		ConsumerKey: key.ConsumerKey,
+		AccessToken: key.AccessToken,
+		Search:      term,
+	}
+}
+
+func (request *PocketGetRequest) Get() *PocketResponse {
+	url := "https://getpocket.com/v3/get"
+
+	payload, err := json.Marshal(request)
+	if err != nil {
+		fmt.Printf("Failed to marshal struct object. %v\n", err)
+		os.Exit(1)
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
+	if err != nil {
+		fmt.Printf("Failed to create NewRequest. %v\n", err)
+		os.Exit(1)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		fmt.Printf("Failed to create NewRequest. %v\n", err)
+		os.Exit(1)
+	}
+	defer resp.Body.Close()
+
+	byteArray, _ := ioutil.ReadAll(resp.Body)
+
+	var presp PocketResponse
+	if json.Unmarshal(byteArray, &presp) != nil {
+		fmt.Printf("Failed to create NewRequest. %v\n", err)
+		os.Exit(1)
+	}
+
+	return &presp
 }
