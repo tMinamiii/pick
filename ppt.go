@@ -72,7 +72,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	var key pickpocket.PocketAuthKey
+	var key pick.PocketAuthKey
 
 	if json.Unmarshal(raw, &key) != nil {
 		fmt.Println(err.Error())
