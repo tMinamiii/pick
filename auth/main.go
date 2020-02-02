@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	pickpocket "pickpocket/ppt"
 	"runtime"
 	"strings"
 	"time"
@@ -38,10 +39,6 @@ func OpenBrowser(url string) {
 	}
 }
 
-type PocketRequest struct {
-	ConsumerKey string `json:"consumer_key"`
-	RedirectURI string `json:"redirect_uri"`
-}
 
 func Post(url string, payload []byte) []byte {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
@@ -122,14 +119,11 @@ func emitAccessToken(consumerKey string, code string) []byte {
 		accessTokenParameter := strings.Split(string(body), "&")[0]
 		accessToken := strings.Split(accessTokenParameter, "=")[1]
 
-		result, err := json.Marshal(
-			struct {
-				ConsumerKey string `json:"consumer_key"`
-				AccessToken string `json:"access_token"`
-			}{
-				consumerKey,
-				accessToken,
-			})
+
+		result, err := json.Marshal(&pickpocket.PocketAuthKey{
+			ConsumerKey: consumerKey,
+			AccessToken: accessToken,
+		})
 
 		if err != nil {
 			os.Exit(1)
@@ -141,12 +135,12 @@ func emitAccessToken(consumerKey string, code string) []byte {
 	return []byte{}
 }
 
-type RedirectHandler struct {
+type redirectHandler struct {
 	ConsumerKey string
 	Code        string
 }
 
-func (rh RedirectHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (rh redirectHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	result := emitAccessToken(rh.ConsumerKey, rh.Code)
 
 	fmt.Fprintln(w, "<html>")
@@ -190,7 +184,7 @@ func main() {
 
 	go authAndRedirect(code)
 
-	http.Handle("/", &RedirectHandler{consumerKey, code})
+	http.Handle("/", &redirectHandler{consumerKey, code})
 	http.HandleFunc("/exit", exitHandler)
 
 	if http.ListenAndServe(RedirectURL, nil) != nil {

@@ -1,6 +1,18 @@
-package pickpocket
+package pick
 
 import "bytes"
+
+type PocketRequest struct {
+	ConsumerKey string `json:"consumer_key"`
+	RedirectURI string `json:"redirect_uri"`
+}
+
+// AuthKey is data structure for reading key.json
+type PocketAuthKey struct {
+	ConsumerKey string `json:"consumer_key"`
+	AccessToken string `json:"access_token"`
+}
+
 
 // PocketResponse is represent Pocket Get API resposen
 type PocketResponse struct {

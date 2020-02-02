@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	pickpocket "pickpocket/ppt"
+	pickpocket "pick/ppt"
 )
 
 // GetRequest is Pocket Retrieve API struct
@@ -19,7 +19,7 @@ type GetRequest struct {
 }
 
 // NewGetRequest create new GetRequest data structure
-func NewGetRequest(term string, key AuthKey) *GetRequest {
+func NewGetRequest(term string, key pick.PocketAuthKey) *GetRequest {
 	return &GetRequest{
 		ConsumerKey: key.ConsumerKey,
 		AccessToken: key.AccessToken,
@@ -27,7 +27,7 @@ func NewGetRequest(term string, key AuthKey) *GetRequest {
 	}
 }
 
-func get(request *GetRequest) *pickpocket.PocketResponse {
+func (request *GetRequest) get() *pickpocket.PocketResponse {
 	url := "https://getpocket.com/v3/get"
 
 	payload, err := json.Marshal(request)
@@ -55,19 +55,13 @@ func get(request *GetRequest) *pickpocket.PocketResponse {
 
 	byteArray, _ := ioutil.ReadAll(resp.Body)
 
-	var presp pickpocket.PocketResponse
+	var presp pick.PocketResponse
 	if json.Unmarshal(byteArray, &presp) != nil {
 		fmt.Printf("Failed to create NewRequest. %v\n", err)
 		os.Exit(1)
 	}
 
 	return &presp
-}
-
-// AuthKey is data structure for reading key.json
-type AuthKey struct {
-	ConsumerKey string `json:"consumer_key"`
-	AccessToken string `json:"access_token"`
 }
 
 func main() {
@@ -78,7 +72,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	var key AuthKey
+	var key pickpocket.PocketAuthKey
 
 	if json.Unmarshal(raw, &key) != nil {
 		fmt.Println(err.Error())
@@ -86,6 +80,6 @@ func main() {
 	}
 
 	request := NewGetRequest("DynamoDB", key)
-	resp := get(request)
+	resp := request.get()
 	fmt.Println(resp.String())
 }

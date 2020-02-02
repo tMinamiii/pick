@@ -1,4 +1,4 @@
-package pickpocket
+package pick
 
 import (
 	"fmt"

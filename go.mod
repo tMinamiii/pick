@@ -1,3 +1,3 @@
-module pickpocket
+module pick
 
 go 1.13
