@@ -1,14 +1,12 @@
 package pick
 
 import (
-	"bufio"
 	"context"
 	"encoding/json"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
-	"time"
 )
 
 type Pick struct {
@@ -44,22 +42,11 @@ func (ig *idgen) Next() uint64 {
 
 func New() *Pick {
 	return &Pick{
-		Argv:              os.Args,
-		Stderr:            os.Stderr,
-		Stdin:             os.Stdin,
-		Stdout:            os.Stdout,
-		currentLineBuffer: NewMemoryBuffer(),
-		idgen:             newIDGen(),
-		queryExecDelay:    50 * time.Millisecond,
-		readyCh:           make(chan struct{}),
-		screen:            NewTermbox(),
-		selection:         NewSelection(),
-		maxScanBufferSize: bufio.MaxScanTokenSize,
+		Argv:   os.Args,
+		Stderr: os.Stderr,
+		Stdin:  os.Stdin,
+		Stdout: os.Stdout,
 	}
-}
-
-func (p *Pick) Ready() <-chan struct{} {
-	return p.readyCh
 }
 
 func (p *Pick) Run() (string, error) {
