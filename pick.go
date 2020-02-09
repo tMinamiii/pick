@@ -1,7 +1,6 @@
 package pick
 
 import (
-	"context"
 	"encoding/json"
 	"io"
 	"io/ioutil"
@@ -14,30 +13,6 @@ type Pick struct {
 	Stderr io.Writer
 	Stdin  io.Reader
 	Stdout io.Writer
-}
-
-func newIDGen() *idgen {
-	return &idgen{ch: make(chan uint64)}
-}
-
-func (ig *idgen) Run(ctx context.Context) {
-	var i uint64
-	for ; ; i++ {
-		select {
-		case <-ctx.Done():
-			return
-		case ig.ch <- i:
-		}
-
-		if i >= uint64(1<<63)-1 {
-			// If this happens, it's a disaster, but what can we do...
-			i = 0
-		}
-	}
-}
-
-func (ig *idgen) Next() uint64 {
-	return <-ig.ch
 }
 
 func New() *Pick {
