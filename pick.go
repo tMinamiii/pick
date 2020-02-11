@@ -2,48 +2,34 @@ package pick
 
 import (
 	"encoding/json"
-	"io"
 	"io/ioutil"
 	"log"
-	"os"
 )
 
-type Pick struct {
-	Argv   []string
-	Stderr io.Writer
-	Stdin  io.Reader
-	Stdout io.Writer
-}
+type Pick struct{}
 
 func New() *Pick {
-	return &Pick{
-		Argv:   os.Args,
-		Stderr: os.Stderr,
-		Stdin:  os.Stdin,
-		Stdout: os.Stdout,
-	}
+	return &Pick{}
 }
 
-func (p *Pick) Run() (string, error) {
-	term := p.Argv[0]
-
+func (p *Pick) Run(term string) (*PocketGetResponse, error) {
 	raw, err := ioutil.ReadFile("./key.json")
 	if err != nil {
 		log.Fatal(err.Error())
-		return "", err
+		return nil, err
 	}
 
 	var key PocketAuthKey
 
 	if json.Unmarshal(raw, &key) != nil {
 		log.Fatal(err.Error())
-		return "", err
+		return nil, err
 	}
 
 	request := NewPocketGetRequest(term, key)
 	resp, err := request.Get()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return resp.String(), nil
+	return resp, nil
 }

@@ -46,12 +46,10 @@ type PocketArticle struct {
 }
 
 func (p *PocketArticle) String() string {
-	var out bytes.Buffer
-
-	out.WriteString(" * " + p.ResolvedTitle)
-	out.WriteString("(" + p.ResolvedURL + ")\n")
-
-	return out.String()
+	// var out bytes.Buffer
+	// out.WriteString(p.ResolvedURL)
+	// return out.String()
+	return p.ResolvedURL
 }
 
 type PocketGetResponse struct {
