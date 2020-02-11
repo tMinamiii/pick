@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"os/user"
 )
 
 type Pick struct{}
@@ -13,7 +14,15 @@ func New() *Pick {
 }
 
 func (p *Pick) Run(term string) (*PocketGetResponse, error) {
-	raw, err := ioutil.ReadFile("./key.json")
+	usr, err := user.Current()
+
+	if err != nil {
+		log.Fatal(err.Error())
+		return nil, err
+	}
+
+	raw, err := ioutil.ReadFile(usr.HomeDir + "/.config/pick/key.json")
+
 	if err != nil {
 		log.Fatal(err.Error())
 		return nil, err

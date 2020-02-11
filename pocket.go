@@ -82,6 +82,7 @@ func NewPocketGetRequest(term string, key PocketAuthKey) *PocketGetRequest {
 		ConsumerKey: key.ConsumerKey,
 		AccessToken: key.AccessToken,
 		Search:      term,
+		Count:       100,
 	}
 }
 

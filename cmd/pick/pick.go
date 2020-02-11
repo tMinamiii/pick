@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"pick"
@@ -9,6 +10,23 @@ import (
 )
 
 func main() {
+	flag.Parse()
+	args := flag.Args()
+
+	if len(args) == 2 {
+		if args[0] == "keygen" {
+			consumerKey := args[1]
+			code := pick.RequestCode(consumerKey)
+			fmt.Println(code)
+			// open browser for auth
+			go pick.AuthAndRedirect(code)
+			// launch http server for detecting auth finished
+			pick.LaunchHTTPServer(consumerKey, code)
+		}
+
+		os.Exit(0)
+	}
+
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Fprintf(os.Stderr, "Error:\n%s", err)
