@@ -1,4 +1,4 @@
-module pick
+module github.com/tMinamiii/pick
 
 go 1.13
 

@@ -8,9 +8,9 @@ import (
 	"log"
 	"os"
 	"os/user"
-	"pick/pocket"
 
 	"github.com/manifoldco/promptui"
+	"github.com/tMinamiii/pick/pocket"
 )
 
 func main() {

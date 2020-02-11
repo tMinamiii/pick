@@ -11,5 +11,5 @@ deps:
 
 .PHONY: build
 build: deps
-	[ -d "build" ] || mkdir -p build
+	# [ -d "build" ] || mkdir -p build
 	go build -o pick main.go
