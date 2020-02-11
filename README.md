@@ -2,6 +2,8 @@
 
  Pick is able to search sites in your Pocket and open browser.
 
+[![Image from Gyazo](https://i.gyazo.com/993a78fd1fc4828ada433a79514f3e35.gif)](https://gyazo.com/993a78fd1fc4828ada433a79514f3e35)
+
 ## Installation
 
 ``` sh
