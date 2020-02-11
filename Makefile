@@ -12,4 +12,4 @@ deps:
 .PHONY: build
 build: deps
 	[ -d "build" ] || mkdir -p build
-	go build -o build ./cmd/pick
+	go build -o pick main.go

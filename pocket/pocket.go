@@ -1,4 +1,4 @@
-package pick
+package pocket
 
 import (
 	"bytes"
@@ -8,17 +8,17 @@ import (
 	"net/http"
 )
 
-type PocketRequest struct {
+type Request struct {
 	ConsumerKey string `json:"consumer_key"`
 	RedirectURI string `json:"redirect_uri"`
 }
 
-type PocketAuthKey struct {
+type AuthKey struct {
 	ConsumerKey string `json:"consumer_key"`
 	AccessToken string `json:"access_token"`
 }
 
-type PocketSearchMeta struct {
+type SearchMeta struct {
 	TotalResultCount int    `json:"total_result_count"`
 	Count            int    `json:"count"`
 	Offset           int    `json:"offset"`
@@ -26,7 +26,7 @@ type PocketSearchMeta struct {
 	SearchType       string `json:"search_type"`
 }
 
-type PocketArticle struct {
+type Article struct {
 	ItemID        string `json:"item_id"`
 	ResolveID     string `json:"resolved_id"`
 	GivenURL      string `json:"given_url"`
@@ -45,22 +45,22 @@ type PocketArticle struct {
 	Images        string `json:"images"`
 }
 
-func (p *PocketArticle) String() string {
+func (p *Article) String() string {
 	// var out bytes.Buffer
 	// out.WriteString(p.ResolvedURL)
 	// return out.String()
 	return p.ResolvedURL
 }
 
-type PocketGetResponse struct {
-	Status     int                       `json:"status"`
-	List       map[string]*PocketArticle `json:"list"`
-	Error      string                    `json:"error"`
-	SearchMeta PocketSearchMeta          `json:"search_meta"`
-	Since      int                       `json:"since"`
+type GetResponse struct {
+	Status     int                 `json:"status"`
+	List       map[string]*Article `json:"list"`
+	Error      string              `json:"error"`
+	SearchMeta SearchMeta          `json:"search_meta"`
+	Since      int                 `json:"since"`
 }
 
-func (p *PocketGetResponse) String() string {
+func (p *GetResponse) String() string {
 	var out bytes.Buffer
 
 	for _, v := range p.List {
@@ -70,15 +70,15 @@ func (p *PocketGetResponse) String() string {
 	return out.String()
 }
 
-type PocketGetRequest struct {
+type GetRequest struct {
 	ConsumerKey string `json:"consumer_key"`
 	AccessToken string `json:"access_token"`
 	Search      string `json:"search"`
 	Count       int    `json:"count"`
 }
 
-func NewPocketGetRequest(term string, key PocketAuthKey) *PocketGetRequest {
-	return &PocketGetRequest{
+func NewPocketGetRequest(term string, key AuthKey) *GetRequest {
+	return &GetRequest{
 		ConsumerKey: key.ConsumerKey,
 		AccessToken: key.AccessToken,
 		Search:      term,
@@ -86,7 +86,7 @@ func NewPocketGetRequest(term string, key PocketAuthKey) *PocketGetRequest {
 	}
 }
 
-func (request *PocketGetRequest) Get() (*PocketGetResponse, error) {
+func (request *GetRequest) Get() (*GetResponse, error) {
 	url := "https://getpocket.com/v3/get"
 
 	payload, err := json.Marshal(request)
@@ -114,7 +114,7 @@ func (request *PocketGetRequest) Get() (*PocketGetResponse, error) {
 
 	byteArray, _ := ioutil.ReadAll(resp.Body)
 
-	var presp PocketGetResponse
+	var presp GetResponse
 
 	err = json.Unmarshal(byteArray, &presp)
 	if err != nil {

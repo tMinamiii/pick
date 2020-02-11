@@ -1,4 +1,4 @@
-package pick
+package pocket
 
 import (
 	"fmt"

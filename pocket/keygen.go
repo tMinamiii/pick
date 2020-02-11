@@ -1,4 +1,4 @@
-package pick
+package pocket
 
 import (
 	"bytes"
@@ -96,7 +96,7 @@ func emitAccessToken(consumerKey string, code string) []byte {
 		accessTokenParameter := strings.Split(string(body), "&")[0]
 		accessToken := strings.Split(accessTokenParameter, "=")[1]
 
-		result, err := json.Marshal(&PocketAuthKey{
+		result, err := json.Marshal(&AuthKey{
 			ConsumerKey: consumerKey,
 			AccessToken: accessToken,
 		})
