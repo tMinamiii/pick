@@ -5,7 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os/user"
+
+	"github.com/manifoldco/promptui"
 )
 
 type Request struct {
@@ -123,4 +127,81 @@ func (request *GetRequest) Get() (*GetResponse, error) {
 	}
 
 	return &presp, nil
+}
+
+func PickPocket() (err error) {
+	prompt := promptui.Prompt{
+		Label: "Search",
+	}
+
+	term, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+
+	usr, err := user.Current()
+
+	if err != nil {
+		log.Fatal(err.Error())
+		return
+	}
+
+	raw, err := ioutil.ReadFile(usr.HomeDir + "/.config/pick/key.json")
+
+	if err != nil {
+		log.Fatal(err.Error())
+		return
+	}
+
+	var key AuthKey
+
+	if json.Unmarshal(raw, &key) != nil {
+		log.Fatal(err.Error())
+		return
+	}
+
+	request := NewPocketGetRequest(term, key)
+	resp, err := request.Get()
+
+	if err != nil {
+		log.Fatal(err.Error())
+		return
+	}
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+
+	items := make([]*Article, 0, len(resp.List))
+	for _, val := range resp.List {
+		items = append(items, val)
+	}
+
+	templates := &promptui.SelectTemplates{
+		Label:    "{{ . }}?",
+		Active:   "> {{ .ResolvedTitle | cyan }}",
+		Inactive: "{{ .ResolvedTitle | cyan }}",
+		// Active:   "> {{ .ResolvedTitle | cyan }} ({{ .ResolvedURL | red }})",
+		// Inactive: "{{ .ResolvedTitle | cyan }} ({{ .ResolvedURL | red }})",
+		// Selected: "> {{ .ResolvedTitle | red | cyan }}",
+	}
+	selectPrompt := promptui.Select{
+		Label:     "Select Site",
+		Size:      30,
+		Items:     items,
+		Templates: templates,
+	}
+	_, url, err := selectPrompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+
+	OpenBrowser(url)
+
+	return nil
 }

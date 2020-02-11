@@ -17,6 +17,14 @@ const (
 	redirectURL = "localhost:18123"
 )
 
+func RunKeyGen(consumerKey string) {
+	code := RequestCode(consumerKey)
+	// open browser for auth
+	go AuthAndRedirect(code)
+	// launch http server for detecting auth finished
+	LaunchHTTPServer(consumerKey, code)
+}
+
 func Post(url string, payload []byte) []byte {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
 	if err != nil {
@@ -90,8 +98,6 @@ func emitAccessToken(consumerKey string, code string) []byte {
 	authURL := "https://getpocket.com/v3/oauth/authorize"
 	body := Post(authURL, payload)
 
-	fmt.Println(string(body))
-
 	if len(body) > 0 {
 		accessTokenParameter := strings.Split(string(body), "&")[0]
 		accessToken := strings.Split(accessTokenParameter, "=")[1]
@@ -136,7 +142,16 @@ func (rh redirectHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		file, err := os.Create(usr.HomeDir + "/.config/pick/key.json")
+		configDir := usr.HomeDir + "/.config"
+		pickDir := configDir + "/pick"
+
+		if _, err := os.Stat(configDir); os.IsNotExist(err) {
+			os.MkdirAll(pickDir, 0755)
+		} else if _, err := os.Stat(pickDir); os.IsNotExist(err) {
+			os.MkdirAll(pickDir, 0755)
+		}
+
+		file, err := os.Create(pickDir + "/key.json")
 		defer file.Close()
 
 		if err != nil {
