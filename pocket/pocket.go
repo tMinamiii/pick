@@ -182,8 +182,8 @@ func PickPocket() (err error) {
 
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   "> {{ .ResolvedTitle | cyan }}",
-		Inactive: "{{ .ResolvedTitle | cyan }}",
+		Active:   "* {{ .ResolvedTitle | red }}",
+		Inactive: " {{ .ResolvedTitle | cyan }}",
 		// Active:   "> {{ .ResolvedTitle | cyan }} ({{ .ResolvedURL | red }})",
 		// Inactive: "{{ .ResolvedTitle | cyan }} ({{ .ResolvedURL | red }})",
 		// Selected: "> {{ .ResolvedTitle | red | cyan }}",
