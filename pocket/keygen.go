@@ -11,13 +11,26 @@ import (
 	"os/user"
 	"strings"
 	"time"
+
+	"github.com/manifoldco/promptui"
 )
 
 const (
 	redirectURL = "localhost:18123"
 )
 
-func RunKeyGen(consumerKey string) {
+func RunKeyGen() {
+	prompt := promptui.Prompt{
+		Label: "Input Consumer Key",
+	}
+
+	consumerKey, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+
 	code := RequestCode(consumerKey)
 	// open browser for auth
 	go AuthAndRedirect(code)
@@ -152,12 +165,13 @@ func (rh redirectHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 		file, err := os.Create(pickDir + "/key.json")
-		defer file.Close()
 
 		if err != nil {
 			fmt.Println("Failed to create key.json")
 			os.Exit(1)
 		}
+
+		defer file.Close()
 
 		_, err = file.Write(result)
 

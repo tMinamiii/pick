@@ -1,3 +1,4 @@
+// pocket package
 package pocket
 
 import (
@@ -157,7 +158,7 @@ func PickPocket() (err error) {
 
 	var key AuthKey
 
-	if json.Unmarshal(raw, &key) != nil {
+	if err = json.Unmarshal(raw, &key); err != nil {
 		log.Fatal(err.Error())
 		return
 	}
@@ -167,11 +168,6 @@ func PickPocket() (err error) {
 
 	if err != nil {
 		log.Fatal(err.Error())
-		return
-	}
-
-	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
 		return
 	}
 

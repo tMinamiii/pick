@@ -18,8 +18,7 @@ func main() {
 			Name:  "keygen",
 			Usage: "Generate key.json in ~/.config/pick",
 			Action: func(c *cli.Context) error {
-				consumerKey := c.Args().First()
-				pocket.RunKeyGen(consumerKey)
+				pocket.RunKeyGen()
 				return nil
 			},
 		},
