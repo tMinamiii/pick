@@ -10,15 +10,6 @@
 go get -u github.com/tMinamiii/pick
 ```
 
-### WSL
-
-You need wsl-open. and add PATH to powershell.exe
-
-``` sh
-npm i -g wsl-open
-export PATH=/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:$PATH
-```
-
 ## Usage
 
 ### Create Pocket Cosumer Key
