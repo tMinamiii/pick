@@ -2,6 +2,7 @@ package pocket
 
 import (
 	"log"
+	"os"
 	"os/exec"
 	"runtime"
 )
@@ -12,7 +13,11 @@ func OpenBrowser(url string) {
 
 	switch runtime.GOOS {
 	case "linux":
-		err = exec.Command("xdg-open", url).Run()
+		if os.Getenv("WSL_DISTRO_NAME") != "" {
+			err = exec.Command("wsl-open", url).Run()
+		} else {
+			err = exec.Command("xdg-open", url).Run()
+		}
 	case "windows":
 		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Run()
 	case "darwin":
