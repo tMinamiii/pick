@@ -1,13 +1,12 @@
 package pocket
 
 import (
-	"fmt"
 	"log"
 	"os/exec"
 	"runtime"
 )
 
-// OpenBrowser open url each platform default browser
+// OpenBrowser open url each platform default browser.
 func OpenBrowser(url string) {
 	var err error
 
@@ -19,11 +18,11 @@ func OpenBrowser(url string) {
 	case "darwin":
 		err = exec.Command("open", url).Run()
 	default:
-		err = fmt.Errorf("unsupported platform")
 	}
 
 	if err != nil {
 		log.Fatal(err)
+
 		return
 	}
 }

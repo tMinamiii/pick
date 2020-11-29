@@ -19,6 +19,7 @@ func main() {
 			Usage: "Generate key.json in ~/.config/pick",
 			Action: func(c *cli.Context) error {
 				pocket.RunKeyGen()
+
 				return nil
 			},
 		},
