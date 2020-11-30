@@ -54,7 +54,8 @@ func (p *Article) String() string {
 	// var out bytes.Buffer
 	// out.WriteString(p.ResolvedURL)
 	// return out.String()
-	return p.ResolvedURL
+	// return p.ResolvedURL
+	return p.GivenURL
 }
 
 type GetResponse struct {
@@ -174,20 +175,25 @@ func PickPocket(term string) (err error) {
 
 	items := make([]*Article, 0, len(resp.List))
 	for _, val := range resp.List {
+		if val.GivenTitle == "" {
+			val.GivenTitle = val.GivenURL
+		}
 		items = append(items, val)
 	}
 
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   "* {{ .ResolvedTitle | red }}",
-		Inactive: "   {{ .ResolvedTitle | cyan }}",
+		Active:   "* {{ .GivenTitle | red }}",
+		Inactive: "   {{ .GivenTitle | cyan }}",
+		// Active:   "* {{ .ResolvedTitle | red }}",
+		// Inactive: "   {{ .ResolvedTitle | cyan }}",
 		// Active:   "> {{ .ResolvedTitle | cyan }} ({{ .ResolvedURL | red }})",
 		// Inactive: "{{ .ResolvedTitle | cyan }} ({{ .ResolvedURL | red }})",
 		// Selected: "> {{ .ResolvedTitle | red | cyan }}",
 	}
 	selectPrompt := promptui.Select{
 		Label:     "Select Site",
-		Size:      30,
+		Size:      100,
 		Items:     items,
 		Templates: templates,
 	}
