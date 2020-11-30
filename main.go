@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -35,8 +34,6 @@ func main() {
 	if len(args) > 0 {
 		word = strings.Join(args, " ")
 	}
-
-	fmt.Println(word)
 
 	app.Action = func(context *cli.Context) error {
 		return pocket.PickPocket(word)
