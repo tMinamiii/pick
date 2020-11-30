@@ -17,7 +17,7 @@ func main() {
 	app.Version = "0.0.1"
 	app.Commands = []cli.Command{
 		{
-			Name:  "keygen",
+			Name:  "auth",
 			Usage: "Generate key.json in ~/.config/pick",
 			Action: func(c *cli.Context) error {
 				pocket.RunKeyGen()

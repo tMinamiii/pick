@@ -25,7 +25,7 @@ Access https://getpocket.com/developer/apps/ and **CREATE AN APPLICATION**
 ### Auth Pocket
 
 ``` sh
-pick keygen <Pocket Consumer Key>
+pick auth <Pocket Consumer Key>
 ```
 
 Generate authorization token file in `$HOME/.config/pick/key.json`.
