@@ -1,8 +1,11 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/tMinamiii/pick/pocket"
 	"github.com/urfave/cli"
@@ -25,8 +28,18 @@ func main() {
 		},
 	}
 
+	flag.Parse()
+	args := flag.Args()
+	word := ""
+
+	if len(args) > 0 {
+		word = strings.Join(args, " ")
+	}
+
+	fmt.Println(word)
+
 	app.Action = func(context *cli.Context) error {
-		return pocket.PickPocket()
+		return pocket.PickPocket(word)
 	}
 
 	err := app.Run(os.Args)

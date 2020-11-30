@@ -130,16 +130,19 @@ func (request *GetRequest) Get() (*GetResponse, error) {
 	return &presp, nil
 }
 
-func PickPocket() (err error) {
-	prompt := promptui.Prompt{
-		Label: "Search",
-	}
-
-	term, err := prompt.Run()
-
-	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
-		return
+func PickPocket(word string) (err error) {
+	term := ""
+	if word == "" {
+		prompt := promptui.Prompt{
+			Label: "Search",
+		}
+		term, err = prompt.Run()
+		if err != nil {
+			fmt.Printf("Prompt failed %v\n", err)
+			return
+		}
+	} else {
+		term = word
 	}
 
 	usr, err := user.Current()
