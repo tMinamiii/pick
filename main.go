@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/tMinamiii/pick/pocket"
 	"github.com/urfave/cli"
@@ -33,7 +32,7 @@ func main() {
 	term := ""
 
 	if len(args) > 0 {
-		term = strings.Join(args, " ")
+		term = args[0]
 	}
 
 	app.Action = func(context *cli.Context) error {
