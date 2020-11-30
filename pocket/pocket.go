@@ -130,9 +130,9 @@ func (request *GetRequest) Get() (*GetResponse, error) {
 	return &presp, nil
 }
 
-func PickPocket(word string) (err error) {
-	term := ""
-	if word == "" {
+// PickPocket searches document title or content(Premium plan) in Pocket document.
+func PickPocket(term string) (err error) {
+	if term == "" {
 		prompt := promptui.Prompt{
 			Label: "Search",
 		}
@@ -141,8 +141,6 @@ func PickPocket(word string) (err error) {
 			fmt.Printf("Prompt failed %v\n", err)
 			return
 		}
-	} else {
-		term = word
 	}
 
 	usr, err := user.Current()

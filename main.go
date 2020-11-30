@@ -27,16 +27,17 @@ func main() {
 		},
 	}
 
+	// コマンドライン引数がある場合は、それを検索語とする
 	flag.Parse()
 	args := flag.Args()
-	word := ""
+	term := ""
 
 	if len(args) > 0 {
-		word = strings.Join(args, " ")
+		term = strings.Join(args, " ")
 	}
 
 	app.Action = func(context *cli.Context) error {
-		return pocket.PickPocket(word)
+		return pocket.PickPocket(term)
 	}
 
 	err := app.Run(os.Args)
