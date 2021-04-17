@@ -16,7 +16,10 @@ import (
 )
 
 const (
-	redirectURL = "localhost:18123"
+	redirectURL               = "localhost:18123"
+	oauthRequestURL           = "https://getpocket.com/v3/oauth/request"
+	oauthAuthorizeURL         = "https://getpocket.com/v3/oauth/authorize"
+	authorizeRequestURLFormat = "https://getpocket.com/auth/authorize?request_token=%s&redirect_uri=http://localhost:18123"
 )
 
 func RunKeyGen() {
@@ -80,14 +83,14 @@ func RequestCode(consumerKey string) string {
 		os.Exit(1)
 	}
 
-	url := "https://getpocket.com/v3/oauth/request"
-	respBody := Post(url, payload)
+	respBody := Post(oauthRequestURL, payload)
 
 	return strings.Split(string(respBody), "=")[1]
 }
 
 func AuthAndRedirect(code string) {
-	authorizeRequestURL := "https://getpocket.com/auth/authorize?request_token=" + code + "&redirect_uri=http://" + redirectURL
+	authorizeRequestURL := fmt.Sprintf(authorizeRequestURLFormat, code)
+	// "https://getpocket.com/auth/authorize?request_token=" + code + "&redirect_uri=http://" + redirectURL
 
 	time.Sleep(1 * time.Second)
 	OpenBrowser(authorizeRequestURL)
@@ -108,8 +111,7 @@ func emitAccessToken(consumerKey string, code string) []byte {
 		os.Exit(1)
 	}
 
-	authURL := "https://getpocket.com/v3/oauth/authorize"
-	body := Post(authURL, payload)
+	body := Post(oauthAuthorizeURL, payload)
 
 	if len(body) > 0 {
 		accessTokenParameter := strings.Split(string(body), "&")[0]
@@ -138,14 +140,16 @@ type redirectHandler struct {
 func (rh redirectHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	result := emitAccessToken(rh.ConsumerKey, rh.Code)
 
-	fmt.Fprintln(w, "<html>")
-	fmt.Fprintln(w, "<head>")
-	fmt.Fprintln(w, "<script type=\"text/javascript\">")
-	fmt.Fprintln(w, "fetch('http://localhost:18123/exit');")
-	fmt.Fprintln(w, "</script>")
-	fmt.Fprintln(w, "</head>")
-	fmt.Fprintln(w, "<body>authorized</body>")
-	fmt.Fprintln(w, "</html>")
+	html := `<html>
+<head>
+<script type="text/javascript">
+fetch('http://localhost:18123/exit');
+</script>
+</head>
+<body>authorized</body>
+</html>
+`
+	fmt.Fprintln(w, html)
 
 	if len(result) > 0 {
 		usr, err := user.Current()
